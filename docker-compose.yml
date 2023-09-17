@@ -1,0 +1,26 @@
+version: '3.4'
+
+services:
+  eshop.api:
+    container_name: eshop.Api
+    build:
+      context: .
+      dockerfile: src/Api/Dockerfile
+    depends_on:
+      - eshop-db
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - 4000:4000
+
+  eshop-db:
+    image: postgres:latest
+    container_name: eshop.Db
+    environment:
+      - POSTGRES_DB=eshop
+      - POSTGRES_USER=eshop_user
+      - POSTGRES_PASSWORD=9d9dfbfbfdfd@S
+    volumes:
+      - ./.containers/database:/var/lib/postgresql/data
+    ports:
+      - 5432:5432

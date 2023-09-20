@@ -16,7 +16,9 @@ internal sealed class DeleteProductCommandHandler : ICommandHandler<DeleteProduc
         _productRepository = productRepository;
         _unitOfWork = unitOfWork;
     }
-    public async Task<Result> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(
+        DeleteProductCommand request, 
+        CancellationToken cancellationToken)
     {
         var product = await _productRepository.GetByIdAsync(request.ProductId, cancellationToken);
 

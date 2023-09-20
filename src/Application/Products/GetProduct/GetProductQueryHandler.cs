@@ -10,11 +10,14 @@ internal sealed class GetProductQueryHandler : IQueryHandler<GetProductQuery, Pr
 {
     private readonly ISqlConnectionFactory _sqlConnectionFactory;
 
-    public GetProductQueryHandler(ISqlConnectionFactory sqlConnectionFactory)
+    public GetProductQueryHandler(
+        ISqlConnectionFactory sqlConnectionFactory)
     {
         _sqlConnectionFactory = sqlConnectionFactory;
     }
-    public async Task<Result<ProductResponse>> Handle(GetProductQuery request, CancellationToken cancellationToken)
+    public async Task<Result<ProductResponse>> Handle(
+        GetProductQuery request, 
+        CancellationToken cancellationToken)
     {
         using var connection = _sqlConnectionFactory.CreateConnection();
 

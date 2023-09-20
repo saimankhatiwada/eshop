@@ -17,7 +17,9 @@ internal sealed class UpdateProductCommandHandler : ICommandHandler<UpdateProduc
         _productRepository = productRepository;
         _unitOfWork = unitOfWork;
     }
-    public async Task<Result> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(
+        UpdateProductCommand request, 
+        CancellationToken cancellationToken)
     {
         var product = await _productRepository.GetByIdAsync(request.ProductId, cancellationToken);
 

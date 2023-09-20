@@ -3,7 +3,8 @@ namespace Domain.Abstractions;
 public abstract class Entity
 {
     private readonly List<IDomainEvent> _domainEvents = new();
-    protected Entity(Guid id)
+    protected Entity(
+        Guid id)
     {
         Id = id;
     }
@@ -23,7 +24,8 @@ public abstract class Entity
         _domainEvents.Clear();
     }
 
-    protected void RaiseDomainEvent(IDomainEvent domainEvent)
+    protected void RaiseDomainEvent(
+        IDomainEvent domainEvent)
     {
         _domainEvents.Add(domainEvent);
     }

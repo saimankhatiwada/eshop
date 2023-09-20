@@ -1,6 +1,6 @@
 ﻿using Domain.Abstractions;
 
-namespace Domain.Apartments;
+namespace Domain.Products;
 
 public static class ProductErrors
 {

@@ -11,6 +11,8 @@ public record Currency
     public static Currency FromCode(string code) => All.FirstOrDefault(c => c.Code == code) ??
         throw new ApplicationException("The currency code is invalid");
 
+    public static Currency CheckCode(string code) => All.FirstOrDefault(c => c.Code == code) ??
+        None;
     public static readonly IReadOnlyCollection<Currency> All = new[]
     {
         Npr,

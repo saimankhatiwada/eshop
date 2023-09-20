@@ -1,12 +1,16 @@
 using Domain.Shared;
 using FluentValidation;
 
-namespace Application.Products.CreateProduct;
+namespace Application.Products.UpdateProduct;
 
-public class CreateProductCommandValidator : AbstractValidator<CreateProductCommand>
+public class UpdateProductCommandValidator : AbstractValidator<UpdateProductCommand>
 {
-    public CreateProductCommandValidator()
+    public UpdateProductCommandValidator()
     {
+        RuleFor(c => c.ProductId)
+            .NotEmpty()
+            .WithMessage("An identifier can never be empty");
+
         RuleFor(c => c.Name)
             .NotEmpty()
             .WithMessage("Name cannot be empty.")
@@ -42,5 +46,4 @@ public class CreateProductCommandValidator : AbstractValidator<CreateProductComm
     {
         return !string.IsNullOrEmpty(Currency.CheckCode(currency).Code);
     }
-
 }

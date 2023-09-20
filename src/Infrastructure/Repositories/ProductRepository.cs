@@ -8,4 +8,5 @@ internal sealed class ProductRepository : Repository<Product>, IProductRepositor
         : base(dbContext)
     {
     }
+
 }

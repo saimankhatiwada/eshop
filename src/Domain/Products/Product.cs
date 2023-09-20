@@ -47,4 +47,24 @@ public sealed class Product : Entity
 
         return product;
     }
+
+    public Result Update(
+        Name name,
+        Description description,
+        Money money,
+        Quantity quantity)
+    {
+        Name = name;
+        Description = description;
+        Money = money;
+        Quantity = quantity;
+        RaiseDomainEvent(new ProductUpdatedDomainEvent(Id));
+        return Result.Success();
+    }
+
+    public Result Delete()
+    {
+        RaiseDomainEvent(new ProductDeletedDomainEvent(Id));
+        return Result.Success();
+    }
 }

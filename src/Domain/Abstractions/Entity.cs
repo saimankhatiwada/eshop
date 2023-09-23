@@ -1,17 +1,20 @@
 namespace Domain.Abstractions;
 
-public abstract class Entity
+public abstract class Entity<TEntityId> : IEntity
 {
     private readonly List<IDomainEvent> _domainEvents = new();
-    protected Entity(Guid id)
+    protected Entity(
+        TEntityId id)
     {
         Id = id;
     }
 
+    #pragma warning disable CS8618
     protected Entity()
     {
     }
-    public Guid Id { get; init; }
+    #pragma warning restore CS8618
+    public TEntityId Id { get; init; }
 
     public IReadOnlyList<IDomainEvent> GetDomainEvents()
     {
@@ -23,7 +26,8 @@ public abstract class Entity
         _domainEvents.Clear();
     }
 
-    protected void RaiseDomainEvent(IDomainEvent domainEvent)
+    protected void RaiseDomainEvent(
+        IDomainEvent domainEvent)
     {
         _domainEvents.Add(domainEvent);
     }

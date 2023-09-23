@@ -7,13 +7,40 @@ public class CreateProductCommandValidator : AbstractValidator<CreateProductComm
 {
     public CreateProductCommandValidator()
     {
-        RuleFor(c => c.Name).NotEmpty().MaximumLength(200);
-        RuleFor(C => C.Description).NotEmpty().MaximumLength(2000);
-        RuleFor(c => c.Currency).NotEmpty().Must(CheckCurrencyCode);
+        RuleFor(c => c.Name)
+            .NotEmpty()
+            .WithMessage("Name cannot be empty.")
+            .MaximumLength(200)
+            .WithMessage("Name cannont be longer than 200 character.");
+
+        RuleFor(C => C.Description)
+            .NotEmpty()
+            .WithMessage("Name cannot be empty.")
+            .MaximumLength(2000)
+            .WithMessage("Description cannont be longer than 2000 character.");
+
+        RuleFor(c => c.Amount)
+            .NotNull()
+            .WithMessage("Amount is required")
+            .GreaterThanOrEqualTo(1)
+            .WithMessage("Amount should be equal or greater than 1.");
+
+        RuleFor(c => c.Quantity)
+            .NotNull()
+            .WithMessage("Quantity is required")
+            .GreaterThanOrEqualTo(1)
+            .WithMessage("Quantity should be equal or greater than 1.");
+
+        RuleFor(c => c.Currency)
+            .NotEmpty()
+            .WithMessage("Currency Cannot be empty.")
+            .Must(CheckCurrencyCode)
+            .WithMessage("Invalid currency.");
     }
 
     private bool CheckCurrencyCode(string currency)
     {
-        return !string.IsNullOrEmpty(Currency.FromCode(currency).Code);
+        return !string.IsNullOrEmpty(Currency.CheckCode(currency).Code);
     }
+
 }

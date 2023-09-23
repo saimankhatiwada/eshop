@@ -1,6 +1,8 @@
 using Application.Products.CreateProduct;
+using Application.Products.DeleteProduct;
 using Application.Products.GetAllProduct;
 using Application.Products.GetProduct;
+using Application.Products.UpdateProduct;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,7 +19,7 @@ public class ProductsController : ControllerBase
         _sender = sender;
     }
 
-    [HttpPost]
+    [HttpPost("create")]
     public async Task<IActionResult> CreateProduct(
         CreateProductRequest request,
         CancellationToken cancellationToken)
@@ -47,7 +49,7 @@ public class ProductsController : ControllerBase
         return result.IsSuccess ? Ok(result.Value) : NotFound();
     }
 
-    [HttpGet]
+    [HttpGet("get")]
     public async Task<IActionResult> GetAllProduct(
         CancellationToken cancellationToken)
     {
@@ -56,5 +58,35 @@ public class ProductsController : ControllerBase
         var result = await _sender.Send(query, cancellationToken);
 
         return result.IsSuccess ? Ok(result.Value) : NotFound();
+    }
+
+    [HttpPut("update")]
+    public async Task<IActionResult> UpdateProduct(
+        UpdateProductRequest request,
+        CancellationToken cancellationToken)
+    {
+        var command = new UpdateProductCommand(
+            request.ProductId,
+            request.Name,
+            request.Description,
+            request.Amount,
+            request.Currency,
+            request.Quantity);
+
+        var result = await _sender.Send(command, cancellationToken);
+
+        return result.IsSuccess ? Ok() : BadRequest(result.Error);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteProduct(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        var command = new DeleteProductCommand(id);
+
+        var result = await _sender.Send(command, cancellationToken);
+
+        return result.IsSuccess ? Ok() : BadRequest(result.Error);
     }
 }

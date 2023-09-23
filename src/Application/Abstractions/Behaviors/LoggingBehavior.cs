@@ -10,7 +10,8 @@ public class LoggingBehavior<TRequest, TResponse>
 {
     private readonly ILogger<TRequest> _logger;
 
-    public LoggingBehavior(ILogger<TRequest> logger)
+    public LoggingBehavior(
+        ILogger<TRequest> logger)
     {
         _logger = logger;
     }

@@ -11,7 +11,8 @@ public class ValidationBehaviour<TRequest, TResponse>
 {
     private readonly IEnumerable<IValidator<TRequest>> _validators;
 
-    public ValidationBehaviour(IEnumerable<IValidator<TRequest>> validators)
+    public ValidationBehaviour(
+        IEnumerable<IValidator<TRequest>> validators)
     {
         _validators = validators;
     }
@@ -21,7 +22,7 @@ public class ValidationBehaviour<TRequest, TResponse>
         RequestHandlerDelegate<TResponse> next, 
         CancellationToken cancellationToken)
     {
-        if (_validators.Any())
+        if (!_validators.Any())
         {
             return await next();
         }

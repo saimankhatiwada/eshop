@@ -13,6 +13,9 @@ internal sealed class ProductConfiguration : IEntityTypeConfiguration<Product>
 
         builder.HasKey(product => product.Id);
 
+        builder.Property(product => product.Id)
+            .HasConversion(productId => productId.value, value => new ProductId(value));
+
         builder.Property(product => product.Name)
             .HasMaxLength(200)
             .HasConversion(name => name.Value, value => new Name(value));

@@ -4,7 +4,8 @@ namespace Application.Exceptions;
 
 public sealed class ValidationException : Exception
 {
-    public ValidationException(IEnumerable<ValidationError> errors)
+    public ValidationException(
+        IEnumerable<ValidationError> errors)
     {
         Errors = errors;
     }

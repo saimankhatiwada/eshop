@@ -29,6 +29,6 @@ internal sealed class CreateProductCommandHandler : ICommandHandler<CreateProduc
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return product.Id;
+        return product.Id.value;
     }
 }

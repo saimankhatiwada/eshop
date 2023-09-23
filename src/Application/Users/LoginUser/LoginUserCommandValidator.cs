@@ -1,24 +1,16 @@
 using FluentValidation;
 
-namespace Application.Users.RegisterUser;
+namespace Application.Users.LoginUser;
 
-public class RegisterUserCommandValidator : AbstractValidator<RegisterUserCommand>
+public class LoginUserCommandValidator : AbstractValidator<LoginUserCommand>
 {
-    public RegisterUserCommandValidator()
+    public LoginUserCommandValidator()
     {
-        RuleFor(c => c.FirstName)
-            .NotEmpty()
-            .WithMessage("FirstName cannot be empty.");
-
-        RuleFor(c => c.LastName)
-            .NotEmpty()
-            .WithMessage("LastName cannot be empty.");
-
         RuleFor(c => c.Email)
             .EmailAddress()
             .WithMessage("Must be a valid email.");
 
-       RuleFor(c => c.Password)
+        RuleFor(c => c.Password)
             .NotEmpty()
             .WithMessage("Password cannot be empty")
             .MinimumLength(8)
@@ -33,5 +25,6 @@ public class RegisterUserCommandValidator : AbstractValidator<RegisterUserComman
             .WithMessage("Password must contain at least one number.")
             .Matches(@"[\!\?\*\.]+")
             .WithMessage("Password must contain at least one (!? *.).");
+            
     }
 }

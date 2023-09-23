@@ -1,18 +1,20 @@
 namespace Domain.Abstractions;
 
-public abstract class Entity
+public abstract class Entity<TEntityId> : IEntity
 {
     private readonly List<IDomainEvent> _domainEvents = new();
     protected Entity(
-        Guid id)
+        TEntityId id)
     {
         Id = id;
     }
 
+    #pragma warning disable CS8618
     protected Entity()
     {
     }
-    public Guid Id { get; init; }
+    #pragma warning restore CS8618
+    public TEntityId Id { get; init; }
 
     public IReadOnlyList<IDomainEvent> GetDomainEvents()
     {

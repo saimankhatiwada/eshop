@@ -4,10 +4,10 @@ using Domain.Shared;
 
 namespace Domain.Products;
 
-public sealed class Product : Entity
+public sealed class Product : Entity<ProductId>
 {
     private Product(
-        Guid id,
+        ProductId id,
         Name name,
         Description description,
         Money money,
@@ -37,7 +37,7 @@ public sealed class Product : Entity
         Quantity quantity)
     {
         var product = new Product(
-            Guid.NewGuid(),
+            ProductId.New(),
             name,
             description,
             money,

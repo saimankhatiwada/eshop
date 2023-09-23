@@ -3,8 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
-internal abstract class Repository<T>
-    where T : Entity
+internal abstract class Repository<TEntity, TEntityId>
+    where TEntity : Entity<TEntityId>
+    where TEntityId : class
 {
     private readonly ApplicationDbContext _dbContext;
 
@@ -13,26 +14,26 @@ internal abstract class Repository<T>
         _dbContext = dbContext;
     }
 
-    public async Task<T?> GetByIdAsync(
-        Guid id,
+    public async Task<TEntity?> GetByIdAsync(
+        TEntityId id,
         CancellationToken cancellationToken)
     {
         return await _dbContext
-            .Set<T>()
+            .Set<TEntity>()
             .FirstOrDefaultAsync(entity => entity.Id == id, cancellationToken);
     }
 
-    public void Add(T entity)
+    public void Add(TEntity entity)
     {
         _dbContext.Add(entity);
     }
 
-    public void Update(T entity)
+    public void Update(TEntity entity)
     {
         _dbContext.Update(entity);
     }
     
-    public void Delete(T entity)
+    public void Delete(TEntity entity)
     {
         _dbContext.Remove(entity);
     }

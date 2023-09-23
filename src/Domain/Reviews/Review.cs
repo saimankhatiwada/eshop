@@ -1,14 +1,16 @@
 using Domain.Abstractions;
+using Domain.Products;
 using Domain.Reviews.Events;
+using Domain.Users;
 
 namespace Domain.Reviews;
 
-public sealed class Review : Entity
+public sealed class Review : Entity<ReviewId>
 {
     private Review(
-        Guid id,
-        Guid productId,
-        Guid userId,
+        ReviewId id,
+        ProductId productId,
+        UserId userId,
         Rating rating,
         Comment comment,
         DateTime createdOnUtc)
@@ -27,9 +29,9 @@ public sealed class Review : Entity
     }
     #pragma warning restore CS8618
 
-    public Guid ProductId { get; private set; }
+    public ProductId ProductId { get; private set; }
 
-    public Guid UserId { get; private set; }
+    public UserId UserId { get; private set; }
 
     public Rating Rating { get; private set; }
 
@@ -38,15 +40,15 @@ public sealed class Review : Entity
     public DateTime CreatedOnUtc { get; private set; }
 
     public static Result<Review> Create(
-        Guid ProductId,
-        Guid UserId,
+        ProductId ProductId,
+        UserId UserId,
         Rating rating,
         Comment comment,
         DateTime createdOnUtc)
     {
 
         var review = new Review(
-            Guid.NewGuid(),
+            ReviewId.New(),
             ProductId,
             UserId,
             rating,

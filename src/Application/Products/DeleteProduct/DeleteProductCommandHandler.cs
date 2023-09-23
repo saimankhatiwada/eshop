@@ -20,7 +20,7 @@ internal sealed class DeleteProductCommandHandler : ICommandHandler<DeleteProduc
         DeleteProductCommand request, 
         CancellationToken cancellationToken)
     {
-        var product = await _productRepository.GetByIdAsync(request.ProductId, cancellationToken);
+        var product = await _productRepository.GetByIdAsync(new ProductId(request.ProductId), cancellationToken);
 
         if (product is null)
         {
@@ -33,6 +33,8 @@ internal sealed class DeleteProductCommandHandler : ICommandHandler<DeleteProduc
         {
             return result;
         }
+
+        _productRepository.Delete(product!);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 

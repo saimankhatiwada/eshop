@@ -19,7 +19,7 @@ public class ProductsController : ControllerBase
         _sender = sender;
     }
 
-    [HttpPost]
+    [HttpPost("create")]
     public async Task<IActionResult> CreateProduct(
         CreateProductRequest request,
         CancellationToken cancellationToken)
@@ -49,7 +49,7 @@ public class ProductsController : ControllerBase
         return result.IsSuccess ? Ok(result.Value) : NotFound();
     }
 
-    [HttpGet]
+    [HttpGet("get")]
     public async Task<IActionResult> GetAllProduct(
         CancellationToken cancellationToken)
     {
@@ -60,7 +60,7 @@ public class ProductsController : ControllerBase
         return result.IsSuccess ? Ok(result.Value) : NotFound();
     }
 
-    [HttpPut]
+    [HttpPut("update")]
     public async Task<IActionResult> UpdateProduct(
         UpdateProductRequest request,
         CancellationToken cancellationToken)

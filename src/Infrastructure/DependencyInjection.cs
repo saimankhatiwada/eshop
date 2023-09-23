@@ -4,6 +4,7 @@ using Application.Abstractions.Data;
 using Application.Abstractions.Email;
 using Domain.Abstractions;
 using Domain.Products;
+using Domain.Reviews;
 using Domain.Users;
 using Infrastructure.Authentication;
 using Infrastructure.Clock;
@@ -48,6 +49,8 @@ public static class DependencyInjection
         services.AddScoped<IUserRepository, UserRepository>();
 
         services.AddScoped<IProductRepository, ProductRepository>();
+
+        services.AddScoped<IReviewRepository, ReviewRepository>();
 
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<ApplicationDbContext>());
 

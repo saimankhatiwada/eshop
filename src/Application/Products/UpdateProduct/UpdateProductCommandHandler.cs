@@ -21,11 +21,11 @@ internal sealed class UpdateProductCommandHandler : ICommandHandler<UpdateProduc
         UpdateProductCommand request, 
         CancellationToken cancellationToken)
     {
-        var product = await _productRepository.GetByIdAsync(request.ProductId, cancellationToken);
+        var product = await _productRepository.GetByIdAsync(new ProductId(request.ProductId), cancellationToken);
 
         if (product is null)
         {
-            Result.Failure(ProductErrors.NotFound);
+            return Result.Failure(ProductErrors.NotFound);
         }
 
         var result = product?.Update(

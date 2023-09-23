@@ -12,6 +12,9 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.HasKey(user => user.Id);
 
+        builder.Property(user => user.Id)
+            .HasConversion(userId => userId.value, value => new UserId(value));
+
         builder.Property(user => user.FirstName)
             .HasMaxLength(200)
             .HasConversion(firstName => firstName.Value, value => new FirstName(value));

@@ -24,7 +24,7 @@ internal sealed class DeleteProductCommandHandler : ICommandHandler<DeleteProduc
 
         if (product is null)
         {
-            Result.Failure(ProductErrors.NotFound);
+            return Result.Failure(ProductErrors.NotFound);
         }
 
         var result = product?.Delete();

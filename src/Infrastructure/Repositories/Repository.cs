@@ -27,11 +27,6 @@ internal abstract class Repository<TEntity, TEntityId>
     {
         _dbContext.Add(entity);
     }
-
-    public void Update(TEntity entity)
-    {
-        _dbContext.Update(entity);
-    }
     
     public void Delete(TEntity entity)
     {

@@ -1,3 +1,4 @@
+using System.Xml.Linq;
 using Application.Abstractions.Authentication;
 using Application.Abstractions.Clock;
 using Application.Abstractions.Data;
@@ -10,12 +11,14 @@ using Infrastructure.Authentication;
 using Infrastructure.Clock;
 using Infrastructure.Data;
 using Infrastructure.Email;
+using Infrastructure.Outbox;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Quartz;
 
 namespace Infrastructure;
 
@@ -26,13 +29,38 @@ public static class DependencyInjection
         IConfiguration configuration)
     {
         services.AddTransient<IDateTimeProvider, DateTimeProvider>();
-        services.AddTransient<IEmailService, EmailService>();
+        
+        AddMail(services, configuration);
 
         AddPresistence(services, configuration);
 
         AddAuthentication(services, configuration);
 
+        AddBackgroundJobs(services, configuration);
+
         return services;
+    }
+
+    private static void AddMail(IServiceCollection services, IConfiguration configuration)
+    {
+        services.Configure<MailOptions>(configuration.GetSection("Mail"));
+        services.AddTransient<IEmailService, EmailService>();
+    }
+
+    private static void AddBackgroundJobs(IServiceCollection services, IConfiguration configuration)
+    {
+        services.Configure<OutboxOptions>(configuration.GetSection("Outbox"));
+
+        #pragma warning disable CS0618
+        services.AddQuartz(options => 
+        {
+            options.UseMicrosoftDependencyInjectionJobFactory();
+        });
+        #pragma warning restore
+
+        services.AddQuartzHostedService(options => options.WaitForJobsToComplete = true);
+
+        services.ConfigureOptions<ProcessOutboxMessagesJobSetup>();
     }
 
     private static void AddPresistence(IServiceCollection services, IConfiguration configuration)

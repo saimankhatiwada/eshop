@@ -9,12 +9,14 @@ public sealed class Product : Entity<ProductId>
     private Product(
         ProductId id,
         Name name,
+        ImageName imageName,
         Description description,
         Money money,
         Quantity quantity)
         :base(id)
     {
         Name = name;
+        ImageName = imageName;
         Description = description;
         Money = money;
         Quantity = quantity;
@@ -26,12 +28,14 @@ public sealed class Product : Entity<ProductId>
     }
     #pragma warning restore CS8618
     public Name Name { get; private set; }
+    public ImageName ImageName { get; private set; }
     public Description Description { get; private set; }
     public Money Money { get; private set; }
     public Quantity Quantity { get; private set; }
 
     public static Product Create(
         Name name,
+        ImageName imageName,
         Description description,
         Money money,
         Quantity quantity)
@@ -39,6 +43,7 @@ public sealed class Product : Entity<ProductId>
         var product = new Product(
             ProductId.New(),
             name,
+            imageName,
             description,
             money,
             quantity);
@@ -50,11 +55,13 @@ public sealed class Product : Entity<ProductId>
 
     public Result Update(
         Name name,
+        ImageName imageName,
         Description description,
         Money money,
         Quantity quantity)
     {
         Name = name;
+        ImageName = imageName;
         Description = description;
         Money = money;
         Quantity = quantity;

@@ -25,6 +25,7 @@ internal sealed class GetProductQueryHandler : IQueryHandler<GetProductQuery, Pr
         SELECT
             id AS Id,
             name AS Name,
+            image_name AS ImageName,
             description AS Description,
             money_amount AS Amount,
             money_currency AS Currency,

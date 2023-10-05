@@ -17,6 +17,14 @@ public class UpdateProductCommandValidator : AbstractValidator<UpdateProductComm
             .MaximumLength(200)
             .WithMessage("Name cannont be longer than 200 character.");
 
+
+        RuleFor(c => c.ImageName)
+            .NotEmpty()
+            .WithMessage("Image name cannot be empty.")
+            .MaximumLength(200)
+            .WithMessage("Image name cannont be longer than 200 character.");
+
+
         RuleFor(C => C.Description)
             .NotEmpty()
             .WithMessage("Name cannot be empty.")
@@ -24,13 +32,13 @@ public class UpdateProductCommandValidator : AbstractValidator<UpdateProductComm
             .WithMessage("Description cannont be longer than 2000 character.");
 
         RuleFor(c => c.Amount)
-            .NotNull()
+            .NotEmpty()
             .WithMessage("Amount is required")
             .GreaterThanOrEqualTo(1)
             .WithMessage("Amount should be equal or greater than 1.");
 
         RuleFor(c => c.Quantity)
-            .NotNull()
+            .NotEmpty()
             .WithMessage("Quantity is required")
             .GreaterThanOrEqualTo(1)
             .WithMessage("Quantity should be equal or greater than 1.");

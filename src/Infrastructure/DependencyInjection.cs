@@ -1,8 +1,12 @@
-using System.Xml.Linq;
+using Amazon;
+using Amazon.Extensions.NETCore.Setup;
+using Amazon.Runtime;
+using Amazon.S3;
 using Application.Abstractions.Authentication;
 using Application.Abstractions.Clock;
 using Application.Abstractions.Data;
 using Application.Abstractions.Email;
+using Application.Abstractions.Storage;
 using Domain.Abstractions;
 using Domain.Products;
 using Domain.Reviews;
@@ -13,6 +17,7 @@ using Infrastructure.Data;
 using Infrastructure.Email;
 using Infrastructure.Outbox;
 using Infrastructure.Repositories;
+using Infrastructure.Storage;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -29,7 +34,7 @@ public static class DependencyInjection
         IConfiguration configuration)
     {
         services.AddTransient<IDateTimeProvider, DateTimeProvider>();
-        
+
         AddMail(services, configuration);
 
         AddPresistence(services, configuration);
@@ -37,8 +42,28 @@ public static class DependencyInjection
         AddAuthentication(services, configuration);
 
         AddBackgroundJobs(services, configuration);
+        
+        AddAWSS3(services, configuration);
 
         return services;
+    }
+
+    private static void AddAWSS3(IServiceCollection services, IConfiguration configuration)
+    {
+        services.Configure<S3SecurityOptions>(configuration.GetSection("S3-Security"));
+        services.Configure<S3BucketOptions>(configuration.GetSection("S3"));
+
+        services.AddDefaultAWSOptions((serviceProvider) =>
+        {
+            var securityOptions = serviceProvider.GetRequiredService<IOptions<S3SecurityOptions>>().Value;
+            return new AWSOptions
+            {
+                Credentials = new BasicAWSCredentials(securityOptions.AccessKey, securityOptions.SecretKey),
+                Region = RegionEndpoint.APSoutheast1
+            };
+        });
+        services.AddAWSService<IAmazonS3>();
+        services.AddSingleton<IStorageService, StoragrService>();
     }
 
     private static void AddMail(IServiceCollection services, IConfiguration configuration)

@@ -1,10 +1,13 @@
+using Application.Abstractions.Storage;
 using Application.Products.CreateProduct;
 using Application.Products.DeleteProduct;
 using Application.Products.GetAllProduct;
 using Application.Products.GetProduct;
 using Application.Products.UpdateProduct;
+using Infrastructure.Storage;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace Api.Controllers.Product;
 
@@ -13,19 +16,29 @@ namespace Api.Controllers.Product;
 public class ProductsController : ControllerBase
 {
     private readonly ISender _sender;
-
-    public ProductsController(ISender sender)
+    private readonly IStorageService _storageService;
+    private readonly S3BucketOptions _s3BucketOptions;
+    public ProductsController(
+        ISender sender,
+        IStorageService storageService,
+        IOptions<S3BucketOptions> s3BucketOptions)
     {
         _sender = sender;
+        _storageService = storageService;
+        _s3BucketOptions = s3BucketOptions.Value;
     }
 
     [HttpPost("create")]
     public async Task<IActionResult> CreateProduct(
-        CreateProductRequest request,
+        [FromForm]CreateProductRequest request,
         CancellationToken cancellationToken)
     {
+        FileInfo fileInfo = new(request.File.FileName);
+        string fileNameWithPrefix = $"{_s3BucketOptions.Products}/{Guid.NewGuid().ToString() + fileInfo.Extension}";
+
         var command = new CreateProductCommand(
             request.Name,
+            fileNameWithPrefix,
             request.Description,
             request.Amount,
             request.Currency,
@@ -33,8 +46,13 @@ public class ProductsController : ControllerBase
 
         var result = await _sender.Send(command, cancellationToken);
 
-        return result.IsFailure ? BadRequest(result.Error) 
-            : CreatedAtAction(nameof(GetProduct), new { id = result.Value }, result.Value);
+        if (result.IsSuccess)
+        {
+            await _storageService.UploadFileAsync(fileNameWithPrefix, request.File.ContentType, request.File.OpenReadStream());
+            return CreatedAtAction(nameof(GetProduct), new { id = result.Value }, result.Value);
+        } 
+
+        return BadRequest(result.Error);
     }
 
     [HttpGet("{id}")]
@@ -46,7 +64,21 @@ public class ProductsController : ControllerBase
 
         var result = await _sender.Send(query, cancellationToken);
 
-        return result.IsSuccess ? Ok(result.Value) : NotFound();
+        if (result.IsSuccess)
+        {
+            var response = new ProductResponse(
+            result.Value.Id,
+            result.Value.Name,
+            _storageService.GetPreSignedUrlAsync(result.Value.ImageName).Result.Value,
+            result.Value.Description,
+            result.Value.Amount,
+            result.Value.Currency,
+            result.Value.Quantity);
+
+            return Ok(response);
+        }
+
+        return NotFound();
     }
 
     [HttpGet("get")]
@@ -65,8 +97,12 @@ public class ProductsController : ControllerBase
         UpdateProductRequest request,
         CancellationToken cancellationToken)
     {
+        FileInfo fileInfo = new(request.File.FileName);
+        string fileName = Guid.NewGuid().ToString() + fileInfo.Extension;
+
         var command = new UpdateProductCommand(
             request.ProductId,
+            fileName,
             request.Name,
             request.Description,
             request.Amount,

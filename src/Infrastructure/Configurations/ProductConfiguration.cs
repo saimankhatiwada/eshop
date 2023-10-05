@@ -20,6 +20,10 @@ internal sealed class ProductConfiguration : IEntityTypeConfiguration<Product>
             .HasMaxLength(200)
             .HasConversion(name => name.Value, value => new Name(value));
 
+        builder.Property(product => product.ImageName)
+            .HasMaxLength(200)
+            .HasConversion(imageName => imageName.Value, value => new ImageName(value));
+
         builder.Property(product => product.Description)
             .HasMaxLength(2000)
             .HasConversion(description => description.Value, value => new Description(value));

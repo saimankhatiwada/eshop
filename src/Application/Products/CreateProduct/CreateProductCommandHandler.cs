@@ -21,6 +21,7 @@ internal sealed class CreateProductCommandHandler : ICommandHandler<CreateProduc
     {
         var product = Product.Create(
             new Name(request.Name),
+            new ImageName(request.ImageName),
             new Description(request.Description),
             new Money(request.Amount, Currency.FromCode(request.Currency)),
             Quantity.Create(request.Quantity).Value);

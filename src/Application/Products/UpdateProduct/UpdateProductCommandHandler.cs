@@ -30,6 +30,7 @@ internal sealed class UpdateProductCommandHandler : ICommandHandler<UpdateProduc
 
         var result = product?.Update(
             new Name(request.Name),
+            new ImageName(request.ImageName),
             new Description(request.Description),
             new Money(request.Amount, Currency.FromCode(request.Currency)),
             Quantity.Create(request.Quantity).Value);

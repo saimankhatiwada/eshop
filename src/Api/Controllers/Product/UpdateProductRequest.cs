@@ -6,4 +6,5 @@ public sealed record UpdateProductRequest(
     string Description,
     decimal Amount,
     string Currency,
-    int Quantity);
+    int Quantity,
+    IFormFile File);

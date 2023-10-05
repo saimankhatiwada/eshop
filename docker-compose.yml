@@ -1,7 +1,7 @@
 version: '3.4'
 
 services:
-  eshop.api:
+  eshop-api:
     container_name: eshop.Api
     build:
       context: .

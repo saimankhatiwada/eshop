@@ -22,6 +22,8 @@
 **/secrets.dev.yaml
 **/values.dev.yaml
 **/.vscode
+**/.pem
+**/.containers
 [Dd]ebug/
 [Dd]ebugPublic/
 [Rr]elease/

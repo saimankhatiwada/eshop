@@ -24,6 +24,14 @@ internal sealed class StoragrService : IStorageService
         _dateTimeProvider = dateTimeProvider;
     }
 
+    public async Task<Result> DeleteFileAsync(string FileName)
+    {
+        var bucketExists = await Amazon.S3.Util.AmazonS3Util.DoesS3BucketExistV2Async(_amazonS3, _s3BucketOptions.BucketName);
+        if (!bucketExists) return Result.Failure(StorageErrors.DoesNotExists);
+        await _amazonS3.DeleteObjectAsync(_s3BucketOptions.BucketName, FileName);
+        return Result.Success();
+    }
+
     public async Task<Result<string>> GetPreSignedUrlAsync(string FileName)
     {
         var bucketExists = await Amazon.S3.Util.AmazonS3Util.DoesS3BucketExistV2Async(_amazonS3, _s3BucketOptions.BucketName);

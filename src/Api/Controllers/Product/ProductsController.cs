@@ -94,16 +94,16 @@ public class ProductsController : ControllerBase
 
     [HttpPut("update")]
     public async Task<IActionResult> UpdateProduct(
-        UpdateProductRequest request,
+        [FromForm]UpdateProductRequest request,
         CancellationToken cancellationToken)
     {
         FileInfo fileInfo = new(request.File.FileName);
-        string fileName = Guid.NewGuid().ToString() + fileInfo.Extension;
+        string fileNameWithPrefix = $"{_s3BucketOptions.Products}/{Guid.NewGuid().ToString() + fileInfo.Extension}";
 
         var command = new UpdateProductCommand(
             request.ProductId,
-            fileName,
             request.Name,
+            fileNameWithPrefix,
             request.Description,
             request.Amount,
             request.Currency,
@@ -111,7 +111,13 @@ public class ProductsController : ControllerBase
 
         var result = await _sender.Send(command, cancellationToken);
 
-        return result.IsSuccess ? Ok() : BadRequest(result.Error);
+        if (result.IsSuccess)
+        {
+            await _storageService.UploadFileAsync(fileNameWithPrefix, request.File.ContentType, request.File.OpenReadStream());
+            return Ok();
+        }
+
+        return BadRequest(result.Error);
     }
 
     [HttpDelete("{id}")]

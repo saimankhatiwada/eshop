@@ -7,6 +7,7 @@ services:
       context: .
       dockerfile: src/Api/Dockerfile
     depends_on:
+      - eshop-idp
       - eshop-db
     environment:
       - ASPNETCORE_ENVIRONMENT=Development

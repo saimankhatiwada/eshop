@@ -1,5 +1,6 @@
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
+using Application.Abstractions.Storage;
 using Application.Products.Shared;
 using Dapper;
 using Domain.Abstractions;
@@ -9,11 +10,14 @@ namespace Application.Products.GetProduct;
 internal sealed class GetProductQueryHandler : IQueryHandler<GetProductQuery, ProductResponse>
 {
     private readonly ISqlConnectionFactory _sqlConnectionFactory;
+    private readonly IStorageService _storageService;
 
     public GetProductQueryHandler(
-        ISqlConnectionFactory sqlConnectionFactory)
+        ISqlConnectionFactory sqlConnectionFactory,
+        IStorageService storageService)
     {
         _sqlConnectionFactory = sqlConnectionFactory;
+        _storageService = storageService;
     }
     public async Task<Result<ProductResponse>> Handle(
         GetProductQuery request, 
@@ -41,6 +45,9 @@ internal sealed class GetProductQueryHandler : IQueryHandler<GetProductQuery, Pr
                 request.ProductId
             });
 
-        return product;
+        return product with 
+            {
+                ImageName = _storageService.GetPreSignedUrlAsync(product.ImageName).GetAwaiter().GetResult().Value
+            };
     }
 }

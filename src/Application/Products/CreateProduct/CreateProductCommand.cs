@@ -8,4 +8,6 @@ public record CreateProductCommand(
     string Description,
     decimal Amount,
     string Currency,
-    int Quantity) : ICommand<Guid>;
+    int Quantity,
+    string FileContentType,
+    Stream FileStream) : ICommand<Guid>;

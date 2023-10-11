@@ -1,7 +1,7 @@
 namespace Application.Products.Shared;
 
 #pragma warning disable CS8618
-public sealed class ProductResponse
+public sealed record ProductResponse
 {
     public Guid Id { get; init; }
     public string Name { get; init; }

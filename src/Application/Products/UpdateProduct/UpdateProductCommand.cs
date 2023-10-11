@@ -8,4 +8,6 @@ public record UpdateProductCommand(
     string Description,
     decimal Amount,
     string Currency,
-    int Quantity) : ICommand;
+    int Quantity,
+    string FileContentType,
+    Stream FileStream) : ICommand;

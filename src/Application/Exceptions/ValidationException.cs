@@ -1,5 +1,3 @@
-using Application.Abstractions.Behaviors;
-
 namespace Application.Exceptions;
 
 public sealed class ValidationException : Exception

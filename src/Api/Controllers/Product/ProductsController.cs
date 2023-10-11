@@ -16,15 +16,12 @@ namespace Api.Controllers.Product;
 public class ProductsController : ControllerBase
 {
     private readonly ISender _sender;
-    private readonly IStorageService _storageService;
     private readonly S3BucketOptions _s3BucketOptions;
     public ProductsController(
         ISender sender,
-        IStorageService storageService,
         IOptions<S3BucketOptions> s3BucketOptions)
     {
         _sender = sender;
-        _storageService = storageService;
         _s3BucketOptions = s3BucketOptions.Value;
     }
 
@@ -42,17 +39,13 @@ public class ProductsController : ControllerBase
             request.Description,
             request.Amount,
             request.Currency,
-            request.Quantity);
+            request.Quantity,
+            request.File.ContentType,
+            request.File.OpenReadStream());
 
         var result = await _sender.Send(command, cancellationToken);
 
-        if (result.IsSuccess)
-        {
-            await _storageService.UploadFileAsync(fileNameWithPrefix, request.File.ContentType, request.File.OpenReadStream());
-            return CreatedAtAction(nameof(GetProduct), new { id = result.Value }, result.Value);
-        } 
-
-        return BadRequest(result.Error);
+        return result.IsSuccess ? CreatedAtAction(nameof(GetProduct), new { id = result.Value }, result.Value) : BadRequest(result.Error);
     }
 
     [HttpGet("{id}")]
@@ -64,32 +57,22 @@ public class ProductsController : ControllerBase
 
         var result = await _sender.Send(query, cancellationToken);
 
-        if (result.IsSuccess)
-        {
-            var response = new ProductResponse(
-            result.Value.Id,
-            result.Value.Name,
-            _storageService.GetPreSignedUrlAsync(result.Value.ImageName).Result.Value,
-            result.Value.Description,
-            result.Value.Amount,
-            result.Value.Currency,
-            result.Value.Quantity);
-
-            return Ok(response);
-        }
-
-        return NotFound();
+        return result.IsSuccess ? Ok(result.Value) : NotFound();
     }
 
     [HttpGet("get")]
     public async Task<IActionResult> GetAllProduct(
+        double? greaterThan,
+        double? lessThan,
+        string? sortColumn,
+        string? sortOrder,
         CancellationToken cancellationToken)
     {
-        var query = new GetAllProductQuery();
+        var query = new GetAllProductQuery(greaterThan, lessThan, sortColumn, sortOrder);
 
         var result = await _sender.Send(query, cancellationToken);
 
-        return result.IsSuccess ? Ok(result.Value) : NotFound();
+        return result.IsSuccess ? Ok(result.Value) : NoContent();
     }
 
     [HttpPut("update")]
@@ -107,17 +90,13 @@ public class ProductsController : ControllerBase
             request.Description,
             request.Amount,
             request.Currency,
-            request.Quantity);
+            request.Quantity,
+            request.File.ContentType,
+            request.File.OpenReadStream());
 
         var result = await _sender.Send(command, cancellationToken);
 
-        if (result.IsSuccess)
-        {
-            await _storageService.UploadFileAsync(fileNameWithPrefix, request.File.ContentType, request.File.OpenReadStream());
-            return Ok();
-        }
-
-        return BadRequest(result.Error);
+        return result.IsSuccess ? Ok() : BadRequest(result.Error);
     }
 
     [HttpDelete("{id}")]

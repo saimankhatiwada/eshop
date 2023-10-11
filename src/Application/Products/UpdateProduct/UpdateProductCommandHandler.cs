@@ -48,6 +48,8 @@ internal sealed class UpdateProductCommandHandler : ICommandHandler<UpdateProduc
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
+        await _storageService.UploadFileAsync(request.ImageName, request.FileContentType, request.FileStream);
+
         return Result.Success();
     }
 }

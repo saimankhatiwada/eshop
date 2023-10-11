@@ -3,7 +3,6 @@ using Application.Abstractions.Email;
 using Domain.Users;
 using Domain.Users.Events;
 using MediatR;
-using Microsoft.Extensions.Logging;
 
 namespace Application.Users.RegisterUser;
 

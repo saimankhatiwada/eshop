@@ -9,5 +9,4 @@ internal sealed class UserRepository : Repository<User, UserId>, IUserRepository
         : base(dbContext)
     {
     }
-
 }

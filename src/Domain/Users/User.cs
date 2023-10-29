@@ -1,3 +1,4 @@
+using System.Net.Mime;
 using Domain.Abstractions;
 using Domain.Users.Events;
 
@@ -9,12 +10,14 @@ public sealed class User : Entity<UserId>
         UserId id,
         FirstName firstName,
         LastName lastName,
-        Email email)
+        Email email,
+        ImageName imageName)
         :base(id)
     {
         FirstName = firstName;
         LastName = lastName;
         Email = email;
+        ImageName = imageName;
     }
 
 
@@ -27,11 +30,12 @@ public sealed class User : Entity<UserId>
     public FirstName FirstName { get; private set; }
     public LastName LastName { get; private set; }
     public Email Email { get; private set; }
+    public ImageName ImageName { get; private set; }
     public string IdentityId { get; private set; } = string.Empty;
 
-    public static User Create(FirstName firstName, LastName lastName, Email email)
+    public static User Create(FirstName firstName, LastName lastName, Email email, ImageName imageName)
     {
-        User user = new User(UserId.New(), firstName, lastName, email);
+        User user = new User(UserId.New(), firstName, lastName, email, imageName);
 
         user.RaiseDomainEvent(new UserCreatedDomainEvent(user.Id));
 

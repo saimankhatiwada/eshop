@@ -33,5 +33,11 @@ public class RegisterUserCommandValidator : AbstractValidator<RegisterUserComman
             .WithMessage("Password must contain at least one number.")
             .Matches(@"[\!\?\*\.]+")
             .WithMessage("Password must contain at least one (!? *.).");
+
+        RuleFor(c => c.ImageName)
+            .NotEmpty()
+            .WithMessage("Image name cannot be empty.")
+            .MaximumLength(200)
+            .WithMessage("Image name cannont be longer than 200 character.");
     }
 }

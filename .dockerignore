@@ -24,6 +24,8 @@
 **/.vscode
 **/.pem
 **/.containers
+**/.files
+[Tt]est/
 [Dd]ebug/
 [Dd]ebugPublic/
 [Rr]elease/

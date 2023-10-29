@@ -1,8 +1,10 @@
 using Application.Users.LoginUser;
 using Application.Users.RegisterUser;
+using Infrastructure.Storage;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace Api.Controllers.User;
 
@@ -11,24 +13,33 @@ namespace Api.Controllers.User;
 public class UserController : ControllerBase
 {
     private readonly ISender _sender;
+    private readonly S3BucketOptions _s3BucketOptions;
 
     public UserController(
-        ISender sender)
+        ISender sender,
+        IOptions<S3BucketOptions> s3BucketOptions)
     {
         _sender = sender;
+        _s3BucketOptions = s3BucketOptions.Value;
     }
 
     [AllowAnonymous]
     [HttpPost("register")]
     public async Task<IActionResult> Register(
-        RegisterUserRequest request,
+        [FromForm]RegisterUserRequest request,
         CancellationToken cancellationToken)
     {
+        FileInfo fileInfo = new(request.File.FileName);
+        string fileNameWithPrefix = $"{_s3BucketOptions.Users}/{Guid.NewGuid().ToString() + fileInfo.Extension}";
+
         var command = new RegisterUserCommand(
             request.Email,
             request.FirstName,
             request.LastName,
-            request.Password);
+            request.Password,
+            fileNameWithPrefix,
+            request.File.ContentType,
+            request.File.OpenReadStream());
 
         var result = await _sender.Send(command, cancellationToken);
 

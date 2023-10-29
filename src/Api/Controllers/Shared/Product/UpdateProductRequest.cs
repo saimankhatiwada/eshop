@@ -1,4 +1,4 @@
-namespace Api.Controllers.Product;
+namespace Api.Controllers.Shared.Product;
 
 public sealed record UpdateProductRequest(
     Guid ProductId,

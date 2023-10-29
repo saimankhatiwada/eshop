@@ -9,7 +9,8 @@ internal sealed class LoginUserCommandHandler : ICommandHandler<LoginUserCommand
 {
     private readonly IJwtService _jwtService;
 
-    public LoginUserCommandHandler(IJwtService jwtService)
+    public LoginUserCommandHandler(
+        IJwtService jwtService)
     {
         _jwtService = jwtService;
     }

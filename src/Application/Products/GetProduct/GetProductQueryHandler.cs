@@ -45,9 +45,11 @@ internal sealed class GetProductQueryHandler : IQueryHandler<GetProductQuery, Pr
                 request.ProductId
             });
 
+#pragma warning disable CS8602 
         return product with 
             {
                 ImageName = _storageService.GetPreSignedUrlAsync(product.ImageName).GetAwaiter().GetResult().Value
             };
+#pragma warning restore CS8602 
     }
 }

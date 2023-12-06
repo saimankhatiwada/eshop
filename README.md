@@ -54,3 +54,7 @@ This project is licensed under the Apache License - see the [LICENSE](./LICENSE)
 # Acknowledgments
 - This project draws inspiration from the Clean Architecture principles and various design patterns.
 - Special thanks to the .NET and open-source community for their valuable contributions and libraries.
+
+# Note
+To see forntend implimentation of the project do see 
+[eshop-frontends]()

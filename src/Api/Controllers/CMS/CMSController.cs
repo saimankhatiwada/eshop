@@ -4,6 +4,8 @@ using Application.Products.DeleteProduct;
 using Application.Products.GetAllProduct;
 using Application.Products.GetProduct;
 using Application.Products.UpdateProduct;
+using Application.Users.GetAllUser;
+using Application.Users.GetUser;
 using Infrastructure.Storage;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +26,29 @@ public class CMSController : ControllerBase
     {
         _sender = sender;
         _s3BucketOptions = s3BucketOptions.Value;
+    }
+
+    [HttpGet("users/{id}")]
+    public async Task<IActionResult> GetUser(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        var query = new GetUserQuery(id);
+
+        var result = await _sender.Send(query, cancellationToken);
+
+        return result.IsSuccess ? Ok(result.Value) : NoContent();
+    }
+
+    [HttpGet("users/get")]
+    public async Task<IActionResult> GetAllUser(
+        CancellationToken cancellationToken)
+    {
+        var query = new GetAllUserQuery();
+
+        var result = await _sender.Send(query, cancellationToken);
+
+        return result.IsSuccess ? Ok(result.Value) : NoContent();
     }
 
     [HttpPost("products/create")]
